@@ -73,12 +73,17 @@ void WriteOutput(TStr& OutFile, TIntFltVH& EmbeddingsHV, TVVec<TInt, int64>& Wal
   if (OutputWalks) {
     for (int64 i = 0; i < WalksVV.GetXDim(); i++) {
       for (int64 j = 0; j < WalksVV.GetYDim(); j++) {
-        FOut.PutInt(WalksVV(i,j));
-	if(j+1==WalksVV.GetYDim()) {
+        if(WalksVV(i, j) == -1) {
           FOut.PutLn();
-	} else {
+          break;
+        } else {
+          FOut.PutInt(WalksVV(i,j));
+        }
+        if(j+1==WalksVV.GetYDim()) {
+            FOut.PutLn();
+        } else {
           FOut.PutCh(' ');
-	}
+        }
       }
     }
     return;
@@ -112,7 +117,7 @@ int main(int argc, char* argv[]) {
   TIntFltVH EmbeddingsHV;
   TVVec <TInt, int64> WalksVV;
   ReadGraph(InFile, Directed, Weighted, Verbose, InNet);
-  node2vec(InNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter, 
+  node2vec(InNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter,
    Verbose, OutputWalks, WalksVV, EmbeddingsHV);
   WriteOutput(OutFile, EmbeddingsHV, WalksVV, OutputWalks);
   return 0;

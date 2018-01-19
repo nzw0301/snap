@@ -26,8 +26,9 @@ void node2vec(PWNet& InNet, const double& ParamP, const double& ParamQ,
       }
       TIntV WalkV;
       SimulateWalk(InNet, NIdsV[j], WalkLen, Rnd, WalkV);
-      for (int64 k = 0; k < WalkV.Len(); k++) { 
-        WalksVV.PutXY(i*NIdsV.Len()+j, k, WalkV[k]);
+      for (int64 k = 0; k < WalkLen; k++) {
+          if(k < WalkV.Len()) WalksVV.PutXY(i*NIdsV.Len()+j, k, WalkV[k]);
+          else WalksVV.PutXY(i*NIdsV.Len()+j, k, -1);
       }
       WalksDone++;
     }
@@ -64,7 +65,7 @@ void node2vec(const PNGraph& InNet, const double& ParamP, const double& ParamQ,
     if (!NewNet->IsNode(EI.GetDstNId())) { NewNet->AddNode(EI.GetDstNId()); }
     NewNet->AddEdge(EI.GetSrcNId(), EI.GetDstNId(), 1.0);
   }
-  node2vec(NewNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter, 
+  node2vec(NewNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter,
    Verbose, OutputWalks, WalksVV, EmbeddingsHV);
 }
 
@@ -89,7 +90,7 @@ void node2vec(const PNEANet& InNet, const double& ParamP, const double& ParamQ,
     if (!NewNet->IsNode(EI.GetDstNId())) { NewNet->AddNode(EI.GetDstNId()); }
     NewNet->AddEdge(EI.GetSrcNId(), EI.GetDstNId(), InNet->GetFltAttrDatE(EI,"weight"));
   }
-  node2vec(NewNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter, 
+  node2vec(NewNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize, Iter,
    Verbose, OutputWalks, WalksVV, EmbeddingsHV);
 }
 
@@ -102,4 +103,3 @@ void node2vec(const PNEANet& InNet, const double& ParamP, const double& ParamQ,
   node2vec(InNet, ParamP, ParamQ, Dimensions, WalkLen, NumWalks, WinSize,
    Iter, Verbose, OutputWalks, WalksVV, EmbeddingsHV);
 }
-
